@@ -6,7 +6,14 @@ const app = express();
 
 app.use(logger);
 app.use(express.json());
-
 app.use("/todos", router);
+
+
+
+app.use((req,res)=>{
+    res.status(400).json({
+        message : "Route Not Found :("
+    });
+})
 
 export default app;

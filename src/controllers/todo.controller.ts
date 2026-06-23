@@ -7,12 +7,6 @@ export const getTodos = ( req: Request, res: Response ) => {
 
 export const createTodos = ( req: Request, res: Response ) => {
 
-    if ( !req.body.title ){
-        res.status(400).json({
-            message : "Title is Required."
-        })
-    }
-
     const newTodo = {
         id:todos.length+1,
         title: req.body.title,
