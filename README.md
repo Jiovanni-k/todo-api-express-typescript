@@ -29,7 +29,7 @@ The project follows a clean architecture using routes, controllers, and middlewa
 
 ## Project Structure
 
-src/
+src/\n
 ├── server.ts
 ├── app.ts
 ├── routes/
