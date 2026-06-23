@@ -5,6 +5,11 @@ export const todos : Todo[] = [
         id : 1,
         title : "Do the TO-DO list project ",
         completed : false
+    },
+    {
+        id:2,
+        title: "Meeting with Tarek.",
+        completed: false
     }
 ];
 
