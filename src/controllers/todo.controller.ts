@@ -1,19 +1,31 @@
 import { Request , Response } from "express";
-import { todos } from "../data/todo.js";
+import { todos } from "../data/todo.js"; // will remove this after i finish all the endpoints
+import { db } from "../config/db.js";
 
 export const getTodos = ( req: Request, res: Response ) => {
     res.json( todos );
 }
 
-export const createTodos = ( req: Request, res: Response ) => {
+export const createTodos = async ( req: Request, res: Response ) => {
 
-    const newTodo = {
-        id:todos.length+1,
-        title: req.body.title,
-        completed :false 
-    };
-    todos.push(newTodo);
-    res.status(201).json(newTodo);
+    const { title } = req.body;
+try {
+    const result = await db.query(
+        "INSERT INTO todos (title , completed) VALUES ($1,$2) RETURNING *", [title,false] );
+        // the $1, $2 are only placeholders, because SQL does not see the Javascript variables
+        res.status(201).json(result.rows[0]);
+        //because database does not return a clean object, it returns a result wrapper and i choose what part is the 
+        // response, and the RETURNING * returns the inserted rows as an array, and since i only insert one at a time 
+        // so i always return the row at index 0.
+    }
+    catch ( error ){
+        res.status(500).json({
+            message : "Error creating todo."
+        })
+    }
+
+
+
 }
 
 export const getTodoById = ( req: Request , res : Response ) => {

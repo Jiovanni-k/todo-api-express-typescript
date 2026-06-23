@@ -14,4 +14,4 @@ export const todos : Todo[] = [
 ];
 
 
-//This is fake data i did for dev purposes
+//This is fake data i did for dev purposes and for the in memory storage.
