@@ -1,12 +1,11 @@
 import { db } from "../config/db.js";
+import * as repository from "../repositories/todo.repository.js";
 
 export const getAllTodos = async () => {
 
-    const result = await db.query(
-            "SELECT * from todos "
-        );
-
-        return result.rows;
+    const todo = await repository.findAll();
+    return todo;
+    
 }
 
 export const getTodoById = async ( id : number )=>{
@@ -27,7 +26,7 @@ export const updateTodo = async ( id :number, title: string, completed:boolean)=
 
     if ( title === undefined || completed === undefined ){
         return undefined;
-        
+
         }
     const result = await db.query (
                 "UPDATE todos SET title = $1, completed =$2 WHERE id =$3 RETURNING *", [title,completed,id]
