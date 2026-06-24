@@ -5,21 +5,15 @@ export const getAllTodos = async () => {
 
     const todo = await repository.findAll();
     return todo;
-    
 }
 
 export const getTodoById = async ( id : number )=>{
-    const result = await db.query(
-            "SELECT * from todos WHERE id =$1",[id]
-        );
-
-        return result.rows[0];
+    return await repository.findById(id);
 }
 
 export const createTodo = async ( title : string  )=>{
-    const result = await db.query(
-        "INSERT INTO todos (title , completed) VALUES ($1,$2) RETURNING *", [title,false] );
-        return result.rows[0];
+     
+    return await repository.insert(title);
 }
 
 export const updateTodo = async ( id :number, title: string, completed:boolean)=>{
@@ -28,15 +22,11 @@ export const updateTodo = async ( id :number, title: string, completed:boolean)=
         return undefined;
 
         }
-    const result = await db.query (
-                "UPDATE todos SET title = $1, completed =$2 WHERE id =$3 RETURNING *", [title,completed,id]
-            );
-            return result.rows[0];
+        return await repository.update(id,title,completed);
+    
 }
 
 export const deleteTodo = async ( id : number )=>{
-    const result = await db.query(
-            "DELETE  from todos WHERE id =$1", [id]
-        );
-        return result.rowCount;
+    
+    return await repository.remove(id);
 }
