@@ -36,9 +36,6 @@ try {
             message : "Error creating todo."
         })
     }
-
-
-
 }
 
 export const getTodoById =  async ( req: Request , res : Response ) => {
@@ -65,43 +62,59 @@ export const getTodoById =  async ( req: Request , res : Response ) => {
     
 }
 
-export const updateTodo = ( req : Request, res: Response ) => {
-    const todo = todos.find( td => td.id === Number(req.params.id));
-    if ( !todo ){
-        res.status(404).json({
-            message : "Todo Not Found :( "
-        });
-    }
-    else if ( todo ){
-        todo.title = req.body.title ?? todo.title ;
-        todo.completed = req.body.completed ?? todo.completed ;
-    }
+export const updateTodo = async ( req : Request, res: Response ) => {
 
-    res.json(todo);
+    const { title, completed } = req.body;
+
+    if ( title === undefined || completed === undefined ){
+        res.status(400).json({
+            message : "title and completed are required."});
+        }
+
+        try {
+            const id = Number( req.params.id);
+            const result = await db.query (
+                "UPDATE todos SET title = $1, completed =$2 WHERE id =$3 RETURNING*", [title,completed,id]
+            );
+            
+            if ( result.rows.length === 0){
+                res.status(404).json({
+                    message : "Todo Not Found :("
+                });
+            }
+
+            res.status(200).json(result.rows[0]);
+        }
+        catch ( error ){
+            res.status(500).json({
+                message : "Error Updating the todo."
+            })
+        }
+  
 }
 
-export const deleteTodo = ( req : Request , res : Response )=> {
-    const id = Number ( req.params.id);
-    const index = todos.findIndex( td => td.id === id);
+export const deleteTodo = async ( req:Request, res:Response )=>{
 
-    if (index >= 0){
-        todos.splice(index,1);
+
+    try {
+
+        const id = Number(req.params.id);
+        const result = await db.query(
+            "DELETE  from todos WHERE id =$1", [id]
+        );
+
+        if ( result.rowCount === 0 ){
+            return res.status(404).json({
+                message : "Todo Not Found :("
+            });
+        }
+
         res.status(204).send();
     }
-    else if ( index === -1 ){
-    res.status(404).json({
-        message : "Todo Not Found :("
-    });
-   }
-    //findIndex does not return a boolean so using a true or false scenario is wrong
-    //it returns a the number of the index and if the index does not exist it returns -1
-    /* else if (!index ){
-        res.status(404).json(
-            {
-                message : "Todo Not Found :( "
-            }
-        );
-    } */
-   
+    catch ( error ){
+        res.status(500).json({
+            message : "Error Deleting the Todo."
+        })
+    }
 }
 
