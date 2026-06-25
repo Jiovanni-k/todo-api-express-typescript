@@ -57,11 +57,7 @@ export const updateTodo = async ( req : Request, res: Response ) => {
 
         try {
             const todo = await service.updateTodo(id, title, completed);
-            if ( todo === undefined ){
-                res.status(400).json({
-                    message : "title and completed are required."
-                });
-            }
+            
             if ( !todo ){
                 return res.status(404).json({
                     message : "Todo Not Found :("
