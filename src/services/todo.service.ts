@@ -1,4 +1,4 @@
-import { db } from "../config/db.js";
+
 import * as repository from "../repositories/todo.repository.js";
 
 export const getAllTodos = async () => {
@@ -13,9 +13,6 @@ export const getTodoById = async ( id : number )=>{
 
 export const createTodo = async ( title : string  )=>{
 
-    if ( title === undefined ){
-        throw new Error ("title is required.");
-    }
     if ( title.trim()=== ""){
         throw new Error ("title should not be empty.");
     }
@@ -30,7 +27,7 @@ export const updateTodo = async ( id :number, title: string, completed:boolean)=
         throw new Error ("title and completed are required.");
         }
 
-        const exist = repository.findById(id);
+        const exist = await repository.findById(id);
         if ( !exist ){
             return null;
         }

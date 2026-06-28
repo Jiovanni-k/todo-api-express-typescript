@@ -5,10 +5,10 @@ export const getTodos =  async ( req: Request, res: Response ) => {
 
     try{
         const todo = await service.getAllTodos();
-        res.status(200).json(todo);
+       return res.status(200).json(todo);
     }
     catch( error ){
-        res.status(500).json({
+       return res.status(500).json({
             message : "Error displaying todos."
         })
     }
@@ -18,12 +18,18 @@ export const getTodos =  async ( req: Request, res: Response ) => {
 export const createTodos = async ( req: Request, res: Response ) => {
 
     const { title }= req.body;
+    if ( !title ){
+        return res.status(400).json({
+            message : "title is required."
+        })
+    }
+
 try {
     const todo = await service.createTodo(title);
-        res.status(201).json(todo);
+        return res.status(201).json(todo);
     }
     catch ( error ){
-        res.status(500).json({
+       return res.status(500).json({
             message : "Error creating todo."
         })
     }
@@ -39,10 +45,10 @@ export const getTodoById =  async ( req: Request , res : Response ) => {
                 message : "Todo Not Found :("
             });
         }
-        res.status(200).json(todo);
+        return res.status(200).json(todo);
     }
     catch( error ){
-        res.status(500).json({
+        return res.status(500).json({
             message : "Error displaying todo."
         })
     }
@@ -64,10 +70,10 @@ export const updateTodo = async ( req : Request, res: Response ) => {
                 });
             }
 
-            res.status(200).json(todo);
+          return res.status(200).json(todo);
         }
         catch ( error ){
-            res.status(500).json({
+           return res.status(500).json({
                 message : "Error Updating the todo."
             })
         }
@@ -79,17 +85,16 @@ export const deleteTodo = async ( req:Request, res:Response )=>{
     const id = Number (req.params.id);
     try {
         const todo = await service.deleteTodo(id);
-
-        if ( todo === 0 ){
+        if ( !todo ){
             return res.status(404).json({
-                message : "Todo Not Found :("
-            });
+                message : "Todo Not Found:("
+            })
         }
-
-        res.status(204).send();
+        return res.status(204).send();
+        
     }
     catch ( error ){
-        res.status(500).json({
+       return res.status(500).json({
             message : "Error Deleting the Todo."
         })
     }

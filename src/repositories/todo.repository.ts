@@ -1,38 +1,40 @@
-import { db } from "../config/db.js";
+
+import { prisma } from "../config/prisma.js";
 
 export const findAll= async ()=>{
 
-    const result = await db.query(
-            "SELECT * from todos "
-        );
-
-        return result.rows;   
+    return await prisma.todos.findMany();
+    
 }
 
 export const insert = async (  title : string )=>{
-    const result = await db.query(
-        "INSERT INTO todos (title , completed) VALUES ($1,$2) RETURNING *", [title,false] );
-        return result.rows[0];
+    return await prisma.todos.create({
+        data: {
+            title ,
+            completed : false
+        }
+    })
 }
 
 export const findById = async ( id:number )=>{
-    const result = await db.query(
-            "SELECT * from todos WHERE id =$1",[id]
-        );
-
-        return result.rows[0];
+    return await prisma.todos.findUnique({
+        where : { id }
+    })
 }
 
 export const update = async ( id:number, title:string, completed: boolean )=>{
-    const result = await db.query (
-                "UPDATE todos SET title = $1, completed =$2 WHERE id =$3 RETURNING *", [title,completed,id]
-            );
-            return result.rows[0];
+    return await prisma.todos.update({
+        where : {id : id},
+        data :{
+            title : title ,
+            completed : completed
+        }
+    })
 }
 
 export const remove = async ( id : number )=>{
-    const result = await db.query(
-            "DELETE  from todos WHERE id =$1", [id]
-        );
-        return result.rowCount;
+    await prisma.todos.delete({
+        where : { id : id }
+    });
+    return true;
 }
