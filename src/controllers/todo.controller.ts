@@ -17,12 +17,12 @@ export const getTodos =  async ( req: Request, res: Response ) => {
 
 export const createTodos = async ( req: Request, res: Response ) => {
 
-    const { title }= req.body;
-    if ( !title ){
+     const { title }= req.body;
+    /*if ( !title ){
         return res.status(400).json({
             message : "title is required."
         })
-    }
+    } */
 
 try {
     const todo = await service.createTodo(title);
@@ -63,10 +63,16 @@ export const updateTodo = async ( req : Request, res: Response ) => {
 
         try {
             const todo = await service.updateTodo(id, title, completed);
-            
+
             if ( !todo ){
                 return res.status(404).json({
                     message : "Todo Not Found :("
+                });
+            }
+            
+            if ( "error" in todo ){
+                return res.status(400).json({
+                    message : "Title and Completed are required."
                 });
             }
 

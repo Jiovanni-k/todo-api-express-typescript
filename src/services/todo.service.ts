@@ -23,8 +23,7 @@ export const createTodo = async ( title : string  )=>{
 export const updateTodo = async ( id :number, title: string, completed:boolean)=>{
 
     if ( title === undefined || completed === undefined ){
-       
-        throw new Error ("title and completed are required.");
+       return { error : "MISSING_FIELD"};
         }
 
         const exist = await repository.findById(id);

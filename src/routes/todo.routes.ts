@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/", getTodos);
 router.post("/", validation ,createTodos);
 router.get("/:id", getTodoById);
-router.put("/:id", validation ,updateTodo);
+router.put("/:id"/* , validation */ ,updateTodo);
 router.delete("/:id", deleteTodo);
 
 export default router;
