@@ -1,0 +1,90 @@
+import app  from "../../app.js";
+import { describe, expect, it } from "vitest";
+import request from "supertest";
+
+describe ("Todo list integration tests.", ( )=>{
+    it("should get all the todos", async()=>{
+        const response = await request(app).get("/todos");
+
+        expect(response.status).toBe(200);
+        expect(Array.isArray(response.body)).toBe(true);
+    });
+    
+    it("should create todo", async ()=>{
+        const response = await request(app).post("/todos").send({
+            title : "Testing"
+        });
+        expect(response.status).toBe(201);
+        expect(response.body).toHaveProperty("id");
+        expect(response.body.title).toBe("Testing");
+        expect(response.body.completed).toBe(false);
+
+    });
+
+    it("should get todo by Id", async ()=>{
+        const created = await request(app).post(`/todos`).send({
+            title : "Test Creation"
+        });
+        const id = created.body.id;
+        const response = await request(app).get(`/todos/${id}`);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id : id,
+            title : "Test Creation",
+            completed : false
+        });
+        });
+    
+    
+    it ("should update Todo", async ()=>{
+        const created = await request(app).post("/todos").send({
+            title : "old title"
+        });
+        const id = created.body.id;
+        const response = await request(app).put(`/todos/${id}`).send({
+            title : "new title",
+            completed : true
+        });
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id : id,
+            title : "new title",
+            completed : true
+        });
+
+    });
+
+    it("should return 404 when updating non existent todo", async()=>{
+        const response = await request(app).put(`/todos/9999`).send({
+            title : "Anything",
+            completed : false
+        });
+        expect (response.status).toBe(404);
+    });
+
+    it ("should return 400 when updating a todo with a missing requirement", async()=>{
+        const created = await request(app).post("/todos").send({
+            title : "Finish the Task."
+        });
+        const id = created.body.id;
+        const response = await request(app).put( `/todos/${id}`).send({
+            title : "Finish the task now."
+        });
+        expect(response.status).toBe(400); // Because i should update the completed as well.
+    })
+
+    it("should delete todo", async()=>{
+        const created = await request(app).post("/todos").send({
+            title : "deleted"
+        });
+
+        const id = created.body.id;
+        const response = await request(app).delete(`/todos/${id}`);
+        expect ( response.status).toBe(204);
+        
+        const getRes = await request(app).get(`/todos/${id}`);
+        expect(getRes.status).toBe(404);
+    })
+});
+
+

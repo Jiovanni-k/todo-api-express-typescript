@@ -16,5 +16,11 @@
     "strict": true,
 
     "sourceMap": true
-  }
+  }, 
+  "include": ["src"],
+  "exclude": [
+      "node_modules",
+      "dist",
+      "prisma.config.ts"
+    ]
 }
